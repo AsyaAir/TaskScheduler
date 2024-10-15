@@ -4,38 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskScheduler</title>
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="./index.css">
 </head>
 <body>
     <header>
-        <h1></h1>
+        <h1>Create your one personalized task list / Создайте ваш индивидуальный список задач</h1>
     </header>
     <main>
-        <div>
-            <form action="">
-                <div>
-                    <label for="task">Add task / Добавить задачу
-                        <span id = "taskError"></span>
+        <div class="taskAdding">
+            <form class="taskAdding__form" id="taskForm">
+                <div class="taskAdding__form_input">
+                    <label for="task">Add task / Добавить задачу <br>
+                        <span id="taskError"></span>
+                        <input type="text" id = "task" name="task" value = "Задача / Task" />
                     </label>
                 </div>
-                <div>
-                    <button id = "add">Add / Добавить</button>
+                <div class="taskAdding__form_button">
+                    <button id="add" type="submit">Add / Добавить</button>
                 </div>
             </form>
         </div>
-        <div id = "noTasks">
-            <article>No tasks / Нет задач</article>
+        <div class="taskList">
+            <h2>Task scheduler / Список задач</h2>
+            <div class="taskList__empty" id="noTasksMessage">
+                <p>No tasks / Нет задач</p>
+            </div>
+            <div class="taskList__filled">
+                <ul class="taskList__filled_list" id="taskList">
+                </ul>
+                <div class="taskList__list_filled">
+                    <label for="tasks">Task scheduler / Список задач <br>
+                        
+                    </label>
+                </div>
+            </div>
+            <div class="taskList__button">
+                <button id="clean" disabled>Clean task list / Очистить список задач</button>
+            </div>
         </div>
-        <div>
-
-        </div>
-        <div>
-            <button >Clean task schedual / Очистить список задач</button>
-        </div>
-
     </main>
     <footer>
-        <article>by AsyaAir</article>
+        <p>by AsyaAir</p>
     </footer>
     <script src="./index.js"></script>
 </body>
