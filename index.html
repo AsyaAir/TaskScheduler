@@ -8,13 +8,13 @@
 </head>
 <body>
     <header>
-        <h1>Create your one personalized task list / Создайте ваш индивидуальный список задач</h1>
+        <h1>Create your one personalized task list /<br> Создайте ваш индивидуальный список задач</h1>
     </header>
     <main>
         <div class="taskAdding">
             <form class="taskAdding__form" id="taskForm">
                 <div class="taskAdding__form_input">
-                    <label for="task">Add task / Добавить задачу <br>
+                    <label for="task" class="label">Add task / Добавить задачу <br>
                         <span id="taskError"></span>
                         <input type="text" id = "task" name="task" value = "Задача / Task" />
                     </label>
@@ -25,18 +25,16 @@
             </form>
         </div>
         <div class="taskList">
-            <h2>Task scheduler / Список задач</h2>
+            <div class="taskList__list_filled">
+                <label for="tasks" class="label">Task scheduler / Список задач <br>
+                </label>
+            </div>
             <div class="taskList__empty" id="noTasksMessage">
                 <p>No tasks / Нет задач</p>
             </div>
             <div class="taskList__filled">
                 <ul class="taskList__filled_list" id="taskList">
                 </ul>
-                <div class="taskList__list_filled">
-                    <label for="tasks">Task scheduler / Список задач <br>
-                        
-                    </label>
-                </div>
             </div>
             <div class="taskList__button">
                 <button id="clean" disabled>Clean task list / Очистить список задач</button>

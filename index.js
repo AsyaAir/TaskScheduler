@@ -1,50 +1,91 @@
-// 1. Добавление задачи в список:
-// 1.1. Создание обработчика события submit на форме.
-// 1.2. Добавление элемента списка <li>, содержащий текст задачи и чекбокс.
-// 1.3. Если задача добавлена, скрывается сообщение "No tasks / Нет задач".
-// 2. Чекбоксы и кнопка «Очистить список»:
+// Создание функции для добавления задач в список и их сохранения в Local Storage. 
+document.addEventListener('DOMContentLoaded', () => {
+    const taskForm = document.getElementById('taskForm');
+    const taskInput = document.getElementById('task');
+    const taskList = document.getElementById('taskList');
+    const noTasksMessage = document.getElementById('noTasksMessage');
+    const cleanButton = document.getElementById('clean');
+    const taskError = document.getElementById('taskError');
+    // Значение по умолчанию поля ввода задачи
+    const defaultTaskValue = "Задача / Task";
 
-// 2.1. Каждый раз, когда меняется состояние любого чекбокса, проверка, активны ли какие-то чекбоксы.
-// Если хотя бы один чекбокс активен, кнопка «Очистить список» становится активной.
+    // Удаление значения по умолчанию при фокусе
+    taskInput.addEventListener('focus', function() {
+        if (taskInput.value === defaultTaskValue) {
+            taskInput.value = '';  // Очистить поле при фокусе
+        }
+    });
+    // Восстановление значения по умолчанию при уходе фокуса, если поле пустое
+    taskInput.addEventListener('blur', function() {
+        if (taskInput.value.trim() === '') {
+            taskInput.value = defaultTaskValue;  // Восстановить значение
+        }
+    });
 
-// 3. Очистка списка:
-// 3.1. По клику на кнопку «Очистить список» удаление всех задач, у которых стоят галочки.
+    // Чтение задач из Local Storage при загрузке страницы
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    renderTasks();  // Вызов функции рендеринга задач при загрузке страницы
 
-/*Обновлённый план:
-При загрузке страницы нужно проверять Local Storage. Если в нём есть сохранённые задачи, отображаем их в списке.
-Если задач нет, показываем серое уведомление о том, что задач нет, и отключаем кнопку «Очистить список».
-Каждая задача в списке должна иметь неактивный чекбокс.
-Изменение состояния чекбоксов:
+    // Добавление задачи в список
+    taskForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const taskText = taskInput.value.trim();
 
-После добавления задачи чекбокс должен быть неактивным.
-При клике на чекбокс задача помечается как выполненная (активируется чекбокс), а это состояние также должно сохраняться в Local Storage.
-Активация/деактивация кнопки «Очистить список»:
+        if (taskText === '' || taskText === defaultTaskValue) {
+            taskError.textContent = 'Please enter a task / Введите задачу';
+            return;
+        }
+        // Очищение ошибки
+        taskError.textContent = '';
+        // Добавление задачи в список задач
+        const newTask = { text: taskText, completed: false };
+        tasks.push(newTask);
+        saveTasks();
+        // Очищение поля ввода
+        taskInput.value = defaultTaskValue;  // Сбрасывание поля к значению по умолчанию
+        // Рендеринг задачи
+        renderTasks();
+    });
 
-Кнопка «Очистить список» должна быть активной, если хотя бы одна задача добавлена в список.
-Если задач нет или они все удалены, кнопка деактивируется.
-Очистка списка:
+    // Функция сохранения задач в Local Storage
+    function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+    // Функция рендеринга задач на странице
+    function renderTasks() {
+        // Очистка списка задач
+        taskList.innerHTML = '';
+        // Проверка, есть ли задачи
+        if (tasks.length === 0) {
+            noTasksMessage.style.display = 'block';
+            cleanButton.disabled = true;
+        } else {
+            noTasksMessage.style.display = 'none';
+            cleanButton.disabled = false;
+            tasks.forEach((task, index) => {
+                const taskItem = document.createElement('li');
+                taskItem.innerHTML = `
+                    <span>${task.text}</span>
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} data-index="${index}">
+                `;
+                taskList.appendChild(taskItem);
+            });
+        }
+    }
 
-При нажатии на кнопку «Очистить список» все задачи должны быть удалены из списка и Local Storage.
-Список очищается, появляется уведомление о том, что задач нет, и кнопка «Очистить список» снова становится неактивной.
-Сохранение состояния в Local Storage:
+    // Добавление обработчика событий для изменения состояния чекбоксов
+    taskList.addEventListener('change', function(event) {
+        if (event.target.tagName === 'INPUT' && event.target.type === 'checkbox') {
+            const index = event.target.getAttribute('data-index');
+            tasks[index].completed = event.target.checked;  // Измение состояния задачи
+            saveTasks();  // Обновление Local Storage
+        }
+    });
 
-Когда задача добавляется, удаляется или изменяется её статус выполнения, обновляем данные в Local Storage.
-При перезагрузке страницы задачи должны загружаться из Local Storage и отображаться с соответствующими статусами чекбоксов.
-
-
-Основные шаги для реализации JavaScript:
-1. Добавление задачи в список и Local Storage:
-[При нажатии на кнопку «Добавить» необходимо добавить текст задачи в список, а также сохранить её в Local Storage, 
-чтобы она сохранялась при перезагрузке страницы. Проверка на пустое поле: если текст задачи пуст, 
-выводим сообщение об ошибке (например, под полем ввода).]
-1.1. Создание функции для добавления задач в список и их сохранения в Local Storage.
-1.2. Каждый раз, когда пользователь добавляет новую задачу, она записывается в Local Storage 
-в виде объекта с текстом задачи и её состоянием (выполнена или нет).
-2. Чтение задач из Local Storage:
-2.1. При загрузке страницы вызов функции, которая проверяет Local Storage на наличие задач 
-и отображает их в списке, включая сохранённое состояние чекбоксов.
-3. Изменение состояния чекбоксов:
-3.1. Добавление обработчика события на каждый чекбокс, чтобы при клике изменялось его состояние 
-(выполнена задача или нет), и обновляй Local Storage.
-4. Очистка списка и Local Storage:
-4.1. При нажатии на кнопку «Очистить список» удаляются задачи как из DOM (интерфейса страницы), так и из Local Storage. */
+    // Очистка списка задач и Local Storage
+    cleanButton.addEventListener('click', function() {
+        tasks = [];  // Очистка массива задач
+        saveTasks();  // Очистка Local Storage
+        renderTasks();  // Обновление отображения на странице
+    });
+});
